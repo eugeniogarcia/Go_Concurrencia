@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//Demuestra como podemos usar default en un select, para hacer otras cosas mientras esperamos a que nos llegue información por alguno de los canales
 func main() {
 	done := make(chan interface{})
 	go func() {
