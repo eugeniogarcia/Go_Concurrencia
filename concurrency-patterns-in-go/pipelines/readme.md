@@ -175,6 +175,50 @@ Todo combinado:
 	}
 ```
 
+## Repeat de una función
+
+Similar al caso anterior, este generador genera de forma repetida un juego de datos. La diferencia con el ejemplo anterior es que los datos son generados con la aplicación de una función. El parametro del generador es una función:
+
+```go
+fn func() interface{},
+```
+
+Los datos que se generan son los que produce la función:
+
+```go
+case valueStream <- fn():
+```
+
+El generador quedaría como sigue:
+
+```go
+	repeatFn := func(
+		done <-chan interface{},
+		fn func() interface{},
+	) <-chan interface{} {
+		valueStream := make(chan interface{})
+		go func() {
+			defer close(valueStream)
+			for {
+				select {
+				case <-done:
+					return
+				case valueStream <- fn():
+				}
+			}
+		}()
+		return valueStream
+	}
+```
+
+Por ejemplo, un generador de números aleatorios podría ser el que sigue:
+
+```go
+rand := func() interface{} { return rand.Intn(50000000) }
+
+randIntStream := toInt(done, repeatFn(done, rand))
+```
+
 ## Take
 
 Veamos una stage que toma un número determinado de datos del canal y luego termina.
@@ -266,4 +310,3 @@ Todo combinado:
 		return stringStream
 	}
 ```
-
