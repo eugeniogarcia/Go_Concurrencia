@@ -4,13 +4,13 @@ The comment for the Cond type really does a great job of describing its purpose:
 
 In that definition, an “event” is any arbitrary signal between two or more goroutines that carries no information other than the fact that it has occurred. Very often you’ll want to wait for one of these signals before continuing execution on a goroutine.
 
-Crea la condición:
+Crea la condición. El tipo que se pasa como argumento al crear la condición, tiene que implementar la interface `sync.Locker`:
 
 ```go
 c := sync.NewCond(&sync.Mutex{})
 ```
 
-Entramos en la sección crítica:
+Entramos en la sección crítica - se llama al metodo `Lock` del `sync.Locker` que hemos pasado como argumento al crear la condición:
 
 ```go
 c.L.Lock()
